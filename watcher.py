@@ -141,16 +141,15 @@ def main():
         # once every 30 secons. I technically don't request the same
         # page but it is probably a good idea anyway
         time.sleep(118)
-        # Updates after the first one will be rather small, we can
-        # therefore set the limit to 0 to always get as many things
-        # as possible with a single query. Previously, there was a
-        # system to only get comments after the last inserted one but
-        # that turned out to be unreliable due to the fact that you
-        # can't continue a list from a deleted comment or shit like
-        # that. Another explanation would be that the after's expire
-        # after a certain time, I don't know. Getting a fixed number
-        # of comments each iteration is ugly but seemingly necessary.
-        limit = 0
+        # theoretically, supplying the place_holder to get_content is
+        # enough to prevent an absurd number of API requests. However,
+        # if the last_comment or last_submission was deleted, it won't
+        # be returned and we would request until we read limit things.
+        # Since there are unlikely to be more than 100 comments
+        # (probably even less than 25 but better safe than sorry) per
+        # update, I've set limit to 100 because that is the most we
+        # can get with a single request
+        limit = 100
       except (APIException, HTTPException):
         print("Got an (probably temporary) exception from praw.")
         print("Delaying for 30 seconds")
